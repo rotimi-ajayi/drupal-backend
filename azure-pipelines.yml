@@ -1,0 +1,74 @@
+trigger:
+  branches:
+    include:
+      - master  # Change this to your main branch
+
+jobs:
+- job: Build_and_Deploy
+  displayName: 'Build and Deploy Drupal'
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.12'
+
+  - script: |
+      # Install dependencies
+      sudo apt-get update
+      sudo apt-get install -y zip php composer
+      
+      # Install Drupal dependencies using Composer
+      cd .
+      composer install --no-dev --optimize-autoloader
+      
+      # Zip Drupal application
+      zip -r drupal_app.zip .
+
+    displayName: 'Install Dependencies and Zip Drupal Application'
+
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: '.'
+      Contents: '**/*.zip'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drupal_package'
+      publishLocation: 'Container'
+
+- deployment: Deploy_to_CyberPanel
+  displayName: 'Deploy to CyberPanel'
+  pool:
+    vmImage: 'ubuntu-latest'
+
+  environment: 'dev'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: DownloadBuildArtifacts@0
+          inputs:
+            buildType: 'current'
+            downloadType: 'single'
+            artifactName: 'drupal_package'
+            downloadPath: '$(System.ArtifactsDirectory)'
+
+        - task: ExtractFiles@1
+          inputs:
+            archiveFilePatterns: '$(System.ArtifactsDirectory)/drupal_package/**/*.zip'
+            destinationFolder: '$(System.ArtifactsDirectory)/drupal'
+
+        - task: FTPUpload@2
+          inputs:
+            credentialsOption: 'inputs'
+            serverUrl: 'https://168.119.231.115' # Update with your domain
+            username: 'KGFDevOpsAdmin_drupal-backend'
+            password: 'drupal-backend'
+            rootDirectory: '$(System.ArtifactsDirectory)/drupal'
+            remoteDirectory: '/home/test.kindlegatefoundation.org/public_html' # Change this if your website root is different
+            trustSSL: true
+          displayName: 'FTP Upload'
