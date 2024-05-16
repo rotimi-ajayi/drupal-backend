@@ -3,6 +3,7 @@ name: Deploy Drupal to CyberPanel
 on:
   push:
     branches: [ master ]  # Change this to your main branch
+  workflow_dispatch:
 
 jobs:
   build_and_deploy:
