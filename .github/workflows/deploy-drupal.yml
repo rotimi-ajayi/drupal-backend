@@ -31,7 +31,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: drupal_package
-        path: ./web/drupal_app.zip
+        # path: ./web/drupal_app.zip
 
   deploy:
     needs: build
