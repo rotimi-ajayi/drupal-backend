@@ -24,15 +24,9 @@ jobs:
       composer install --no-dev --optimize-autoloader
       
       # Zip Drupal application
-      zip -r drupal_app.zip .
+      zip -r $(Build.ArtifactStagingDirectory)/drupal_app.zip .
 
     displayName: 'Install Dependencies and Zip Drupal Application'
-
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: '.'
-      Contents: '**/*.zip'
-      TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
   - task: PublishBuildArtifacts@1
     inputs:
@@ -61,7 +55,7 @@ jobs:
     - task: FTPUpload@2
       inputs:
         credentialsOption: 'inputs'
-        serverUrl: 'https://168.119.231.115' # Update with your domain
+        serverUrl: 'ftp://168.119.231.115' # Update with your domain
         username: 'KGFDevOpsAdmin_drupal-backend'
         password: 'drupal-backend'
         rootDirectory: '$(System.ArtifactsDirectory)/drupal'
