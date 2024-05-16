@@ -1,0 +1,58 @@
+name: Deploy Drupal to CyberPanel
+
+on:
+  push:
+    branches: [ master ]  # Change this to your main branch
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Python 3.12
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip php composer
+
+      - name: Install Drupal dependencies
+        working-directory: ./web
+        run: |
+          composer install --no-dev --optimize-autoloader
+
+      - name: Zip Drupal application
+        run: |
+          cd ..  # Navigate back to project root
+          zip -r drupal_app.zip .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: drupal_package
+
+      - name: Deploy to CyberPanel (Optional - requires secrets)
+        if: ${{ secrets.CYBERPANEL_USERNAME }} && ${{ secrets.CYBERPANEL_PASSWORD }}
+        uses: actions/download-artifact@v3
+        with:
+          name: drupal_package
+
+      - name: Extract files (optional, depends on your workflow)
+        run: |
+          unzip drupal_package.zip -d drupal
+
+      - name: FTP Upload with Secrets Manager (requires setup)
+        uses: mxschwartz/ftp-upload@v1
+        with:
+          server: ${{ secrets.CYBERPANEL_SERVER }}
+          username: ${{ secrets.CYBERPANEL_USERNAME }}
+          password: ${{ secrets.CYBERPANEL_PASSWORD }}
+          # Update paths based on your setup
+          destination: /public_html
+          # Source can be adjusted if extraction step is used
+          source: drupal_package.zip  # Or 'drupal' if files extracted
