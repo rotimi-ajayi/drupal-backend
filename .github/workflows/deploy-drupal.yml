@@ -44,16 +44,18 @@ jobs:
           name: drupal_package
 
       - name: Extract files (optional, depends on your workflow)
+        id: set-result
         run: |
           unzip drupal_package.zip -d drupal
 
       - name: FTP Upload with Secrets Manager (requires setup)
-        uses: mxschwartz/ftp-upload@v1
+        uses: zinh/ftp-uploader-action@v0.4
         with:
-          server: ${{ secrets.CYBERPANEL_SERVER }}
-          username: ${{ secrets.CYBERPANEL_USERNAME }}
-          password: ${{ secrets.CYBERPANEL_PASSWORD }}
-          # Update paths based on your setup
-          destination: /public_html
-          # Source can be adjusted if extraction step is used
+          ftpHostname: ${{ secrets.CYBERPANEL_SERVER }}
+          ftpUsername: ${{ secrets.CYBERPANEL_USERNAME }}
+          ftpPassword: ${{ secrets.CYBERPANEL_PASSWORD }}
+          files: ${{steps.set-result.outputs.result}}
           source: drupal_package.zip  # Or 'drupal' if files extracted
+          # Update paths based on your setup
+          dest: /public_html
+          # Source can be adjusted if extraction step is used
