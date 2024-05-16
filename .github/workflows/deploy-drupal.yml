@@ -23,8 +23,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y zip composer
-        cd ./web
-        composer install --no-dev --optimize-autoloader
+        # cd ./web
+        # composer install --no-dev --optimize-autoloader
         zip -r drupal_app.zip .
 
     - name: Upload Artifact
