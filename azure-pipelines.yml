@@ -60,7 +60,7 @@ jobs:
       password: 'drupal-backend'
       rootDirectory: '$(System.ArtifactsDirectory)'
       filePatterns: '**'
-      remoteDirectory: '/home/website-name/public_html'
+      remoteDirectory: '/public_html'
       clean: true
       preservePaths: true
       trustSSL: true
