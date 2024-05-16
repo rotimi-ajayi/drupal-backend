@@ -38,7 +38,7 @@ jobs:
           name: drupal_package
 
       - name: Deploy to CyberPanel (Optional - requires secrets)
-        if: ${{ secrets.CYBERPANEL_USERNAME }} && ${{ secrets.CYBERPANEL_PASSWORD }}
+        # if: ${{ secrets.CYBERPANEL_USERNAME }} && ${{ secrets.CYBERPANEL_PASSWORD }}
         uses: actions/download-artifact@v3
         with:
           name: drupal_package
