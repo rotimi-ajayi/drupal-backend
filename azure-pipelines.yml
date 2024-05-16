@@ -20,7 +20,7 @@ jobs:
       sudo apt-get install -y zip php composer
 
       # Install Drupal dependencies using Composer
-      cd ./web
+      cd .
       composer install --no-dev --optimize-autoloader
 
       # Zip Drupal application
@@ -42,6 +42,7 @@ jobs:
   displayName: 'Deploy to CyberPanel'
   pool:
     vmImage: 'ubuntu-latest'
+  dependsOn: Build_and_Deploy
 
   steps:
   - task: DownloadBuildArtifacts@0
