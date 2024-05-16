@@ -58,7 +58,7 @@ jobs:
       serverUrl: 'ftp://168.119.231.115'
       username: 'KGFDevOpsAdmin_drupal-backend'
       password: 'drupal-backend'
-      rootDirectory: '$(System.ArtifactsDirectory)/drupal_package.zip'
+      rootDirectory: '$(System.ArtifactsDirectory)'
       filePatterns: '**'
       remoteDirectory: '/home/website-name/public_html'
       clean: true
