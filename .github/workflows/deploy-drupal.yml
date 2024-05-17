@@ -31,7 +31,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: drupal_package
-        # path: ./web/drupal_app.zip
+        path: ${{ github.workspace }}
 
   deploy:
     needs: build
@@ -42,7 +42,6 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: drupal_package
-        path: ./drupal_package
 
     - name: Extract Artifact
       run: |
