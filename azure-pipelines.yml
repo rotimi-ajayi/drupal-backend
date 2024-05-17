@@ -55,9 +55,9 @@ jobs:
   - task: FtpUpload@2
     inputs:
       credentialsOption: 'inputs'
-      serverUrl: 'ftp://168.119.231.115'
-      username: 'KGFDevOpsAdmin_drupal-backend'
-      password: 'drupal-backend'
+      serverUrl: 'server-url'
+      username: 'username'
+      password: 'pwd'
       rootDirectory: '$(System.ArtifactsDirectory)'
       filePatterns: '**'
       remoteDirectory: '/public_html'
