@@ -17,7 +17,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '7.4'
+        php-version: '8.1'
 
     - name: Install dependencies and zip Drupal application
       run: |
@@ -28,9 +28,9 @@ jobs:
         zip -r drupal_app.zip .
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
-        # name: drupal_package
+        name: drupal_app.zip
         path: ${{ github.workspace }}
 
   deploy:
@@ -40,18 +40,19 @@ jobs:
     steps:
     - name: Download Artifact
       uses: actions/download-artifact@v4
-      # with:
-        # name: drupal_package
+      with:
+        name: drupal_app.zip
 
     - name: Extract Artifact
       run: |
-        unzip ${{ github.workspace }}/drupal_package -d ${{ github.workspace }}/drupal
+        unzip ${{ github.workspace }}/drupal_app.zip -d ${{ github.workspace }}/drupal
 
     - name: FTP Upload
-      uses: SamKirkland/FTP-Deploy-Action@4.0.0
+      uses: dennisameling/ftp-upload-action@v1
       with:
         server: ${{ secrets.CYBERPANEL_SERVER }}
         username: ${{ secrets.CYBERPANEL_USERNAME }}
         password: ${{ secrets.CYBERPANEL_PASSWORD }}
-        local-dir: ${{ github.workspace }}/drupal
-        remote-dir: /public_html
+        secure: false
+        local_dir: ${{ github.workspace }}/drupal/
+        server_dir: /public_html/
